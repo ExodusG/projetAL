@@ -1,0 +1,28 @@
+<app-nav></app-nav>
+<div class="create">
+  <div  class="w-50 d-flex justify-content-center">
+    <mat-card class="w-100">
+      <div class="title">
+        Create a user
+      </div>
+      <form [formGroup]="userForm" (ngSubmit)="onFormSubmit()">
+        <mat-card-content>
+          <mat-form-field class="d-block">
+            <input matInput placeholder="Firstname" formControlName="firstname">
+          </mat-form-field>
+          <mat-form-field class="d-block">
+            <input matInput placeholder="Lastname" formControlName="lastname">
+          </mat-form-field>
+          <mat-form-field class="d-block">
+            <input type="number" matInput placeholder="Age" formControlName="age">
+          </mat-form-field>
+          <mat-form-field class="d-block">
+            <input type="password" matInput placeholder="Password" formControlName="password">
+          </mat-form-field>
+        </mat-card-content>
+        <button mat-stroked-button color="accent" class="btn-block" >Save</button>
+      </form>
+    </mat-card>
+  </div>
+</div>
+

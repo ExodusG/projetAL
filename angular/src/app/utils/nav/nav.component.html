@@ -1,0 +1,15 @@
+<mat-toolbar color="primary">
+  <span class="w-25 justify-content-between d-flex">
+    <span>FR ADMINISTRATION</span>
+    <button mat-icon-button class="ml-2" [routerLink]="['/users']" routerLinkActive="active">
+      <span>Users</span>
+    </button>
+    <button mat-icon-button class="ml-2" [routerLink]="['/associations']" routerLinkActive="active">
+      <span>Associations</span>
+    </button>
+  </span>
+  <span class="mx-auto"></span>
+  <button mat-icon-button matTooltip="Logout" aria-label="Logout" (click)="logout()">
+    <mat-icon>logout</mat-icon>
+  </button>
+</mat-toolbar>

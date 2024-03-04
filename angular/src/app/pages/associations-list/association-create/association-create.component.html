@@ -1,0 +1,26 @@
+<app-nav></app-nav>
+<div class="create">
+  <div class="w-50 d-flex justify-content-center">
+    <mat-card class="w-100">
+      <div class="title">
+      Create an association
+      </div>
+      <form [formGroup]="assoForm" (ngSubmit)="onFormSubmit()">
+        <mat-card-content>
+          <mat-form-field class="d-block">
+            <input matInput placeholder="Name" formControlName="name">
+          </mat-form-field>
+          <mat-form-field class="d-block">
+            <mat-select [disabled]="true" multiple placeholder="Users" [(value)]="dialogData.users" formControlName="users" (click)="openUserSelecterDialog()">
+              <mat-option *ngFor="let user of dialogData.users" [value]="user">
+                {{user.firstname}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-card-content>
+        <button mat-stroked-button color="accent" class="btn-block">Save</button>
+      </form>
+    </mat-card>
+  </div>
+</div>
+

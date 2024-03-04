@@ -1,0 +1,15 @@
+###################
+# BUILD FOR PRODUCTION
+###################
+
+FROM node:18-alpine AS build
+WORKDIR /usr/src/app
+COPY package.json package-lock.json ./
+RUN npm install
+COPY . .
+ARG configuration=production
+RUN npm run build -- --configuration $configuration --output-path=./dist/build
+
+FROM nginx:1.23.3-alpine-slim
+COPY --from=build /usr/src/app/dist/build /usr/share/nginx/html
+

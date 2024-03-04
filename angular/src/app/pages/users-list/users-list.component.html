@@ -1,0 +1,7 @@
+<app-nav></app-nav>
+
+<div class="floating">
+  <button *ngIf="table.selection.hasValue()" class="m-1" mat-raised-button color="warn" (click)="removeSelectedUser()" routerLinkActive="active">Remove user(s) </button>
+  <button class="m-1" mat-raised-button color="primary" [routerLink]="['create']" routerLinkActive="active">Create user</button>
+</div>
+<app-users-table #table [showDialog]="showDialog"></app-users-table>

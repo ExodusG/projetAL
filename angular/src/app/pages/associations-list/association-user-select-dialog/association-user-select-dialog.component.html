@@ -1,0 +1,9 @@
+<div>
+  <mat-dialog-content class="user-table">
+    <app-users-table #table [selected]="data.users"></app-users-table>
+  </mat-dialog-content>
+  <mat-dialog-actions class="float-right">
+    <button mat-button color="warn" (click)="dialogRef.close()">Cancel</button>
+    <button mat-button color="primary" (click)="confirm()">Confirm</button>
+  </mat-dialog-actions>
+</div>

@@ -1,0 +1,73 @@
+version: "3.4"
+services:
+
+  nginx:
+    image: registry.gitlab.com/dembeefr/esir/nginx-front
+    container_name: nest-nginx
+    depends_on:
+      - fr-admin-back
+      - mailer
+    volumes:
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 8080:80
+
+  fr-admin-db:
+    image: postgres
+    container_name: fr-admin-db
+    env_file:
+      - .env
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_DB: ${DB_BASE}
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+
+  fr-admin-back:
+    image: registry.gitlab.com/dembeefr/esir/nestjs
+    container_name: fr-admin-back
+    command: node dist/main.js
+    env_file:
+      - .env
+    environment:
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_BASE=${DB_BASE}
+      - SWAGGER_PREFIX=${SWAGGER_PREFIX}
+    depends_on:
+      - fr-admin-db
+      - rabbitmq
+      - mailer
+
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    env_file:
+      - .env
+    depends_on:
+      - fr-admin-db
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    volumes:
+      - /var/lib/rabbitmq
+
+  mailer:
+    image: registry.gitlab.com/dembeefr/esir/quarkus
+    container_name: quarkus-mailer-dev
+    depends_on:
+      - rabbitmq
+      - maildev
+
+  maildev:
+    image: maildev/maildev
+    container_name: maildev
+
+volumes:
+  fr-admin:
+    driver: local

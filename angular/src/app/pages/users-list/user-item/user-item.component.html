@@ -1,0 +1,22 @@
+<form [formGroup]="userForm">
+    <mat-form-field class="d-block">
+      <input matInput placeholder="Id" formControlName="id" readonly>
+    </mat-form-field>
+    <mat-form-field class="d-block">
+      <input matInput placeholder="Firstname" formControlName="firstname">
+    </mat-form-field>
+    <mat-form-field class="d-block">
+      <input matInput placeholder="Lastname" formControlName="lastname">
+    </mat-form-field>
+    <mat-form-field class="d-block">
+      <input type="number" matInput placeholder="Age" formControlName="age">
+    </mat-form-field>
+    <div formArrayName="associations" class="d-block">
+      <mat-form-field *ngFor="let assos of getAssociationsControl(); let i = index" class="d-block">
+        <input matInput placeholder="Association {{i+1}}" [formControlName]="i" readonly>
+      </mat-form-field>
+    </div>
+    <mat-form-field class="d-block">
+      <input type="password" matInput placeholder="Password" formControlName="password">
+    </mat-form-field>
+</form>

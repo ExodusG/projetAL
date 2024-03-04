@@ -1,0 +1,26 @@
+<div class="login">
+  <mat-toolbar color="primary">
+  <span class="w-100 justify-content-between d-flex justify-content-between">
+    <span>FR ADMINISTRATION</span>
+    <p class="login_name">Tergel Tsagaan - Quentin Le Lan</p>
+  </span>
+  </mat-toolbar>
+  <div class="d-flex justify-content-center">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Log in</mat-card-title>
+      </mat-card-header>
+      <form [formGroup]="loginForm">
+        <mat-card-content>
+          <mat-form-field class="d-block">
+            <input matInput placeholder="Username" formControlName="user">
+          </mat-form-field>
+          <mat-form-field class="d-block">
+            <input matInput type="password" placeholder="Password" formControlName="pass" >
+          </mat-form-field>
+        </mat-card-content>
+        <button mat-stroked-button color="accent" class="btn-block" (click)="login()">Log in</button>
+      </form>
+    </mat-card>
+  </div>
+</div>

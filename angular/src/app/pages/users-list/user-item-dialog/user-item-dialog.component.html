@@ -1,0 +1,8 @@
+<h1 mat-dialog-title> {{user.firstname}} {{user.lastname}}</h1>
+<mat-dialog-content>
+  <app-user-item [user]="user"></app-user-item>
+</mat-dialog-content>
+<mat-dialog-actions class="justify-content-between">
+  <button mat-stroked-button color="warn" (click)="itemComp.remove()">Delete</button>
+  <button mat-stroked-button color="primary" (click)="itemComp.save()">Save</button>
+</mat-dialog-actions>

@@ -1,0 +1,15 @@
+<app-nav></app-nav>
+<mat-card *ngIf="user">
+  <mat-card-header>
+    <mat-card-title>
+      {{user?.firstname}} {{user?.lastname}}
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <app-user-item [user]="user"></app-user-item>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-stroked-button color="warn" (click)="itemComp.remove()">Delete</button>
+    <button mat-stroked-button color="primary" (click)="itemComp.save()">Save</button>
+  </mat-card-actions>
+</mat-card>

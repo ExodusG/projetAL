@@ -1,0 +1,13 @@
+<div class="w-100 d-flex justify-content-between">
+  <mat-form-field *ngIf="displayedColumns" class="select">
+    <mat-label>Filter by</mat-label>
+    <mat-select [(value)]="filterCol" (selectionChange)="applyFilterCol($event)">
+      <mat-option *ngFor="let col of displayedColumns" [value]="col">
+        {{col}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="search-form-field">
+    <input matInput [(ngModel)]="filter" (keyup)="applyFilter(filter)" placeholder="Search">
+  </mat-form-field>
+</div>

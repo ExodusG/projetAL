@@ -1,0 +1,156 @@
+version: "3.4"
+services:
+
+  fr-admin-db:
+    image: postgres
+    container_name: fr-admin-db
+    env_file:
+      - .env
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_DB: ${DB_BASE}
+    volumes:
+      - ./postgres/data-dev:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+
+  fr-admin-back:
+    container_name: fr-admin-back
+    build:
+      context: ./nest/
+      dockerfile: Dockerfile
+      target: development
+    volumes: #for hot reloading
+      - ./nest/:/usr/src/app
+    command: npm run start:dev
+    env_file:
+      - .env
+    environment:
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_BASE=${DB_BASE}
+      - SWAGGER_PREFIX=
+    ports:
+      - "3030:3030"
+    depends_on:
+      - fr-admin-db
+      - rabbitmq
+      - mailer
+
+  fr-admin-front:
+    stdin_open: true
+    container_name: fr-admin-front
+    build:
+      context: ./angular/
+      dockerfile: Dockerfile
+      target: development
+    volumes:
+      - ./angular:/app/client
+    ports:
+      - '4200:4200'
+    depends_on:
+      - fr-admin-back
+
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    ports:
+      - '8888:80'
+    env_file:
+      - .env
+    depends_on:
+      - fr-admin-db
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - /var/lib/rabbitmq
+
+  mailer:
+    build:
+      context: ./quarkus/
+      dockerfile: src/main/docker/Dockerfile.dev.jvm
+    container_name: quarkus-mailer-dev
+    ports:
+      - '8080:8080'
+    depends_on:
+      - rabbitmq
+      - maildev
+
+  maildev:
+    image: maildev/maildev
+    container_name: maildev
+    ports:
+      - '1080:1080'
+      - '1025:1025'
+
+  grafana:
+    image: grafana/grafana-oss
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./benchmark/dashboards:/var/lib/grafana/dashboards
+      - ./benchmark/grafana-datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+      - ./benchmark/grafana-dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+
+  prometheus:
+    image: prom/prometheus:latest
+    command:
+      ['--web.enable-remote-write-receiver', '--config.file=/etc/prometheus/prometheus.yml']
+    container_name: prometheus
+    depends_on:
+      - fr-admin-back
+      - statsd
+    ports:
+      - "9090:9090"
+    volumes:
+      - prometheus_data:/prometheus
+      - ./benchmark/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  k6:
+    image: loadimpact/k6:latest
+    container_name: k6
+    ports:
+      - "6565:6565"
+    environment:
+      - BASE_URL=http://fr-admin-back:3030
+      - K6_STATSD_ADDR=statsd:8125
+      - K6_OUT=statsd
+    volumes:
+      - ./benchmark/load-test:/scripts
+    depends_on:
+      - prometheus
+      - statsd
+    entrypoint:
+      ["k6", "run","-o", "statsd", "/scripts/load.test.js"]
+
+  statsd:
+    image: prom/statsd-exporter
+    container_name: statsd
+    ports:
+      - "9102:9102"
+      - "8125:8125/udp"
+    command:
+      - --statsd.listen-udp=:8125
+      - --statsd.mapping-config=/etc/statsd_exporter.yaml
+    volumes:
+      - ./benchmark/statsd_exporter.yaml:/etc/statsd_exporter.yaml
+
+
+volumes:
+  grafana_data:
+  prometheus_data:
+  fr-admin:
+    driver: local

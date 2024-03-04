@@ -1,0 +1,20 @@
+table {
+  width: 100%;
+  margin:20px;
+}
+
+.associations {
+  width: 75%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.add-association {
+  text-align:right;
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  margin: 1rem;
+}
